@@ -1,0 +1,17 @@
+! constraints here?
+! comments
+! TODO: label stuff--what syntax? => generate checker labels at the 
+! end of each label or manually?
+! TODO: checker label stuff--run through phase 1 of generated code, and then
+! look for checker labels
+! random generates a 32-bit (8-wide hex char)
+macro: th_fork(proc,%l0)
+
+thread "proc" (2):
+	instr: mov %g2 = 1
+	instr: st  [%g1+0x00] = %g2
+	repeat (2):
+		one of:
+			instr: stx [%g1+0x70] = %l?
+			instr: ldx %o? =  [%g1+0x70]
+			instr: membar #Sync

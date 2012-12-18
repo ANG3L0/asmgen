@@ -1,0 +1,77 @@
+! constraints here?
+! comments
+! TODO: label stuff--what syntax? => generate checker labels at the 
+! end of each label or manually?
+! TODO: checker label stuff--run through phase 1 of generated code, and then
+! look for checker labels
+! random generates a 32-bit (8-wide hex char)
+macro: th_fork(proc,%l0)
+
+thread "proc" (64):
+	instr: ta T_CHANGE_PRIV
+	instr: set %g1 = done_flags
+	instr: mov %g2 = 1
+	instr: st  [%g1+0x00] = %g2
+	instr: wrpr %cleanwin = %g0 7
+	instr: wr   %asi = %g0 0x80
+	! instr: membar #Sync
+	instr: ta T_CHANGE_HPRIV
+	repeat (35):
+		one of:
+			instr: stx [%g1+0x70] = %l?
+			instr: stx [%g1+0x80] = %l?
+			instr: stx [%g1+0x70] = %o?
+			instr: stx [%g1+0x80] = %o?
+			instr: stx [%g1+0x90] = %o?
+			instr: stx [%g1+0xa0] = %o?
+			instr: stx [%g1+0xb0] = %o?
+			instr: stx [%g1+0xc0] = %o?
+			instr: stx [%g1+0xd0] = %o?
+			instr: stx [%g1+0xe0] = %o?
+			instr: ldx %o? =  [%g1+0x70]
+			instr: ldx %o? =  [%g1+0x80]
+			instr: ldx %o? =  [%g1+0x90]
+			instr: ldx %o? =  [%g1+0xa0]
+			instr: ldx %o? =  [%g1+0xb0]
+			instr: ldx %o? =  [%g1+0xc0]
+			instr: ldx %o? =  [%g1+0xd0]
+			instr: ldx %o? =  [%g1+0x80]
+			instr: ldx %l? =  [%g1+0x70]
+			instr: ldx %l? =  [%g1+0x80]
+			instr: ldx %l? =  [%g1+0x70]
+			instr: ldx %l? =  [%g1+0x90]
+			instr: ldx %l? =  [%g1+0xa0]
+			instr: ldx %l? =  [%g1+0xb0]
+			instr: ldx %l? =  [%g1+0xc0]
+			instr: ldx %l? =  [%g1+0xe0]
+			instr: ta T_CHANGE_HPRIV
+			instr: ta T_CHANGE_NONHPRIV
+			! instr: membar #Sync
+		repeat(5):
+			one of:
+				instr: add %i? = %g1,1random3
+				instr: add %i? = %g1,1random3
+				instr: ldx %i? = [%g1+0x10]
+				instr: ldx %i? = [%g1+0x20]
+				instr: ldx %i? = [%g1+0x30]
+				instr: ldx %i? = [%g1+0x40]
+				instr: ldx %i? = [%g1+0x50]
+				instr: ldx %i? = [%g1+0x70]
+				instr: ldx %i? = [%g1+0x60]
+				instr: ldx %i? = [%g1+0x90]
+				instr: ldx %i? = [%g1+0x80]
+				instr: ldx %i? = [%g1+0xa0]
+				instr: ldx %i? = [%g1+0xb0]
+				instr: ldx %i? = [%g1+0xc0]
+				instr: ta T_CHANGE_HPRIV
+				instr: ta T_CHANGE_NONHPRIV
+				! instr: membar #Sync
+	! instr: membar #Sync
+	instr: ta T_CHANGE_NONHPRIV
+	instr: ta GOOD_TRAP
+	instr: nop
+
+label "done_flags":
+	repeat (20):
+		macro: .word	0
+	macro: .align	8

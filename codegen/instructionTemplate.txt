@@ -1,0 +1,27 @@
+! constraints here?
+! comments
+! TODO: label stuff--what syntax? => generate checker labels at the 
+! end of each label or manually?
+! TODO: checker label stuff--run through phase 1 of generated code, and then
+! look for checker labels
+! random generates a 32-bit (8-wide hex char)
+instr: ta T_CHANGE_PRIV
+instr: call	this_is_a_label
+repeat (100):
+	one of:
+		instr: stx %l? = [%g1+0x80]
+		one of:
+			! instr: ldxa %l? = [%g1]0x45 how2use?
+			instr: ldx %g? = [%g2+0xfff]
+		repeat (2):
+			instr: membar #sync
+			! blah
+	repeat(3):
+		one of:
+			instr: ldx %g? = [%g1+0x160]
+			! instr: ldxa %l? = [%g1]0x46 how2use?
+
+
+one of:
+	instr: add %? = %g1,random
+	instr: add %? = %g1,random
